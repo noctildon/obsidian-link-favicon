@@ -1,16 +1,18 @@
 ## Link Favicons
 
-Plugin for [Obsidian](https://obsidian.md)
+Plugin for [Obsidian](https://obsidian.md).
+[The original repo](https://github.com/joethei/obsidian-link-favicon) seems to inactive for years, and thus so I have forked it and am keeping it up to date.
 
-![GitHub package.json version](https://img.shields.io/github/package-json/v/joethei/obsidian-link-favicon)
-![GitHub manifest.json dynamic (path)](https://img.shields.io/github/manifest-json/minAppVersion/joethei/obsidian-link-favicon?label=lowest%20supported%20app%20version)
-![GitHub](https://img.shields.io/github/license/joethei/obsidian-link-favicon)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/noctildon/obsidian-link-favicon)
+![GitHub manifest.json dynamic (path)](https://img.shields.io/github/manifest-json/minAppVersion/noctildon/obsidian-link-favicon?label=lowest%20supported%20app%20version)
+![GitHub](https://img.shields.io/github/license/noctildon/obsidian-link-favicon)
 [![libera manifesto](https://img.shields.io/badge/libera-manifesto-lightgrey.svg)](https://liberamanifesto.com)
 ---
 
 With this plugin you can see the favicon for a linked website without using any custom CSS.
 
-![Demo](https://i.joethei.space/Obsidian_zWTByulHmW.png)
+
+![Demo](assets/demo.webm)
 
 Works with: [Admonition](https://github.com/valentine195/obsidian-admonition)
 , [RSS Reader](https://github.com/joethei/obsidian-rss) and many more plugins.
@@ -24,7 +26,7 @@ You can select between these providers in the settings:
 |--------------------------------------------------------------------|-----------|-------------------------|-----------------|
 | Google                                                             | 16x16px   | default icon            | no limit️       |
 | DuckDuckGo                                                         | none      | default icon            | no limit        |
-| [Favicon Grabber](https://favicongrabber.com/)                     | none      | none                    | 100 per minute  | 
+| [Favicon Grabber](https://favicongrabber.com/)                     | none      | none                    | 100 per minute  |
 | [The Favicon Finder](https://github.com/mat/besticon) (selfhosted) | 256x256px | automatically generated | no limit️       |
 | [Icon Horse](https://icon.horse/)                                  | none      | automatically generated | fair use policy |
 | [Splitbee](https://github.com/splitbee/favicon-resolver)           | none      | yes (from Google)       | unknown         |
@@ -48,7 +50,8 @@ You can also add icons for uri schemes such as `mailto://`, `obsidian://` or `ca
 To do this specify the name of the uri scheme(without `://`) in the settings.
 (See the demo gif below)
 
-![Custom icons demo](https://i.joethei.space/IJkX7xvrUB.gif)
+<!-- TODO: fix this -->
+![Custom icons demo](assets/custcom_icon_demo.gif)
 
 ## Disabling on specific links
 If you have a link where you do not want to see the favicon, add `|nofavicon` to the link alias.
