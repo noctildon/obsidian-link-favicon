@@ -18,6 +18,7 @@ main.js
 
 # obsidian
 build/data.json
+data.json
 test.json
 schemas.json
 *.csv
@@ -25,4 +26,5 @@ schemas.json
 cache
 build
 coverage
+styles.css
 .gitdraft
