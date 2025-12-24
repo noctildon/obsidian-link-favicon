@@ -12,7 +12,7 @@ Plugin for [Obsidian](https://obsidian.md).
 With this plugin you can see the favicon for a linked website without using any custom CSS.
 
 
-![Demo](assets/demo.webm)
+![Demo](assets/demo.gif)
 
 Works with: [Admonition](https://github.com/valentine195/obsidian-admonition)
 , [RSS Reader](https://github.com/joethei/obsidian-rss) and many more plugins.
