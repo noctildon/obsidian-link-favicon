@@ -127,6 +127,14 @@ export default class FaviconPlugin extends Plugin {
 
 	override onunload() {
 		this.iconAdder.destruct();
+
+		// Clean up localStorage cache
+		Object.keys(localStorage).forEach((key) => {
+			if(key.startsWith("lf-")) {
+				localStorage.removeItem(key);
+			}
+		});
+
 		console.log("disabling plugin: link favicons");
 	}
 
