@@ -7,11 +7,11 @@ import {SchemaSuggest} from "./SchemaSuggest";
 
 export class OverwrittenIconModal extends Modal {
 	plugin: FaviconPlugin;
-	domain: string = "";
-	icon: string = "";
+	domain = "";
+	icon = "";
 	name = "Domain";
 
-	saved: boolean = false;
+	saved = false;
 
 	constructor(plugin: FaviconPlugin, map?: OverwrittenFavicon, name?: string) {
 		super(plugin.app);
