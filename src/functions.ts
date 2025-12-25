@@ -3,7 +3,7 @@ export function findOpenParen(text: string, closePos: number): number {
 }
 
 export function findMatchingSymbol(text: string, closePos: number, openSymbol: string, closingSymbol: string): number {
-	if (!text.includes(openSymbol)) return 0;
+	if (!text.includes(openSymbol)) return -1;
 	let openPos = closePos;
 	let counter = 1;
 	while (counter > 0) {
