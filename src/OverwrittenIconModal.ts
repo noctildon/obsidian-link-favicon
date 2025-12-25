@@ -1,17 +1,17 @@
 import FaviconPlugin from "./main";
 import {Modal, Notice, Setting} from "obsidian";
 import {OverwrittenFavicon} from "./settings";
-import {getApi, isPluginEnabled} from "@aidenlx/obsidian-icon-shortcodes";
+import {getApi} from "@aidenlx/obsidian-icon-shortcodes";
 import {SchemaSuggest} from "./SchemaSuggest";
 
 
 export class OverwrittenIconModal extends Modal {
 	plugin: FaviconPlugin;
-	domain: string;
-	icon: string;
+	domain: string = "";
+	icon: string = "";
 	name = "Domain";
 
-	saved: boolean;
+	saved: boolean = false;
 
 	constructor(plugin: FaviconPlugin, map?: OverwrittenFavicon, name?: string) {
 		super(plugin.app);
@@ -28,11 +28,11 @@ export class OverwrittenIconModal extends Modal {
 	}
 
 	async displayPreview(contentEl: HTMLElement) : Promise<void> {
-		if(isPluginEnabled(this.plugin) && this.icon) {
+		const iconApi = getApi(this.plugin);
+		if(iconApi && this.icon) {
 			contentEl.empty();
 			const iconPreview = contentEl.createDiv("preview");
 			iconPreview.addClass("link-favicon-preview");
-			const iconApi = getApi(this.plugin);
 			const icon = iconApi.getIcon(this.icon, false);
 			if(icon !== null)
 				iconPreview.append(icon);
@@ -77,75 +77,77 @@ export class OverwrittenIconModal extends Modal {
 		}
 
 
+        // Get aidenlx icon shortcodes plugin API
+        const api = getApi(this.plugin);
+        console.log("overwritetniconmodal API", api);
+        if (api && api.version.compare(">=", "0.6.1")) {
+            new Setting(contentEl)
+                .setName("Icon")
+                .addButton((button) => {
+                    button
+                        .setButtonText("Choose")
+                        .onClick(async() => {
+                            const icon = await api.getIconFromUser();
+                            if(icon) {
+                                this.icon = icon.id;
+                                if(previewEL) {
+                                    await this.displayPreview(previewEL);
+                                }
+                            }
+                        });
+                });
+        } else {
+            const iconSetting = new Setting(contentEl)
+                .setName("Icon");
 
-		const api = getApi(this.plugin);
-		if (api) {
-			if (api.version.compare(">=", "0.6.1")) {
+            if (!api) {
+                iconSetting.setDesc("Enter icon name (Icon Shortcodes plugin required for icon picker and preview)");
+            }
 
-				new Setting(contentEl)
-					.setName("Icon")
-					.addButton((button) => {
-						button
-							.setButtonText("Choose")
-							.onClick(async() => {
-								const icon = await api.getIconFromUser();
-								if(icon) {
-									this.icon = icon.id;
-									if(previewEL) {
-										await this.displayPreview(previewEL);
-									}
-								}
-							});
-					});
+            iconSetting.addText((text) => {
+                text
+                    .setValue(this.icon)
+                    .onChange(async(value) => {
+                        this.icon = value;
+                        if(previewEL) {
+                            await this.displayPreview(previewEL);
+                        }
+                    });
+            });
 
-			}else {
-				new Setting(contentEl)
-					.setName("Icon")
-					.addText((text) => {
-						text
-							.setValue(this.icon)
-							.onChange(async(value) => {
-								this.icon = value;
-								if(previewEL) {
-									await this.displayPreview(previewEL);
-								}
-							});
-					});
-			}
-		}
+            previewEL = contentEl.createDiv("preview");
 
-		previewEL = contentEl.createDiv("preview");
+            await this.displayPreview(previewEL);
 
-		await this.displayPreview(previewEL);
+            const footerEl = contentEl.createDiv();
+            const footerButtons = new Setting(footerEl);
+            footerButtons.addButton((b) => {
+                b.setTooltip("Save")
+                    .setIcon("checkmark")
+                    .onClick(async () => {
+                        if(this.icon && this.domain) {
+                            this.saved = true;
+                            this.close();
+                        }else {
+                            new Notice("Please supply both a " + this.name + " & a icon");
+                        }
 
-		const footerEl = contentEl.createDiv();
-		const footerButtons = new Setting(footerEl);
-		footerButtons.addButton((b) => {
-			b.setTooltip("Save")
-				.setIcon("checkmark")
-				.onClick(async () => {
-					if(this.icon && this.domain) {
-						this.saved = true;
-						this.close();
-					}else {
-						new Notice("Please supply both a " + this.name + " & a icon");
-					}
-
-				});
-			return b;
-		});
-		footerButtons.addExtraButton((b) => {
-			b.setIcon("cross")
-				.setTooltip("Cancel")
-				.onClick(() => {
-					this.saved = false;
-					this.close();
-				});
-			return b;
-		});
+                    });
+                return b;
+            });
+            footerButtons.addExtraButton((b) => {
+                b.setIcon("cross")
+                    .setTooltip("Cancel")
+                    .onClick(() => {
+                        this.saved = false;
+                        this.close();
+                    });
+                return b;
+            });
+        }
 	}
 
-	async onOpen() : Promise<void> {
+	override async onOpen() : Promise<void> {
 		await this.display();
 	}
 }

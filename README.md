@@ -50,7 +50,7 @@ You can also add icons for uri schemes such as `mailto://`, `obsidian://` or `ca
 To do this specify the name of the uri scheme(without `://`) in the settings.
 (See the demo gif below)
 
-<!-- TODO: fix this -->
+
 ![Custom icons demo](assets/custcom_icon_demo.gif)
 
 ## Disabling on specific links

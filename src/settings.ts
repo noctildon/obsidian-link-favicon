@@ -2,7 +2,7 @@ import {App, ButtonComponent, Notice, PluginSettingTab, Setting} from "obsidian"
 import FaviconPlugin from "./main";
 import {providers} from "./provider";
 import {OverwrittenIconModal} from "./OverwrittenIconModal";
-import {getApi, isPluginEnabled} from "@aidenlx/obsidian-icon-shortcodes";
+import {getApi} from "@aidenlx/obsidian-icon-shortcodes";
 import {ProviderTestModal} from "./ProviderTestModal";
 import ls from "localstorage-slim";
 
@@ -228,15 +228,23 @@ export class FaviconSettings extends PluginSettingTab {
 					});
 			});
 
-		if (isPluginEnabled(this.plugin)) {
-			const iconAPI = getApi(this.plugin)!;
-			containerEl.createEl("h2", {text: "Custom icons"});
 
-			containerEl.createEl("h3", {text: "for domains"});
+        // Get aidenlx icon shortcodes plugin API
+		const iconAPI = getApi(this.plugin);
+		containerEl.createEl("h2", {text: "Custom icons"});
 
-			new Setting(containerEl)
-				.setName("Add new")
-				.setDesc("Add custom icon")
+		if (!iconAPI) {
+			const notice = containerEl.createDiv("notice");
+			notice.style.cssText = "padding: 10px; margin: 10px 0; background-color: var(--background-modifier-error); border-radius: 5px;";
+			notice.createEl("strong", {text: "Note: "});
+			notice.createSpan({text: "The Icon Shortcodes plugin is required for custom icons. Install it from Community Plugins to enable icon previews and functionality."});
+		}
+
+		containerEl.createEl("h3", {text: "for domains"});
+
+		new Setting(containerEl)
+			.setName("Add new")
+			.setDesc("Add custom icon")
 				.addButton((button: ButtonComponent): ButtonComponent => {
 					return button
 						.setTooltip("add custom icon")
@@ -263,16 +271,20 @@ export class FaviconSettings extends PluginSettingTab {
 
 			const overwrittenContainer = containerEl.createDiv("overwritten");
 
-			const overwrittenDiv = overwrittenContainer.createDiv("overwritten");
-			for (const overwritten of this.plugin.settings.overwritten) {
-				const setting = new Setting(overwrittenDiv);
+		const overwrittenDiv = overwrittenContainer.createDiv("overwritten");
+		for (const overwritten of this.plugin.settings.overwritten) {
+			const setting = new Setting(overwrittenDiv);
 
-				const desc = new DocumentFragment();
-				desc.createEl("p", {text: "		" + overwritten.icon}).prepend(iconAPI.getIcon(overwritten.icon)!);
+			const desc = new DocumentFragment();
+			if (iconAPI) {
+				const icon = iconAPI.getIcon(overwritten.icon);
+				if (icon) desc.append(icon);
+			}
+			desc.createEl("p", {text: "		" + overwritten.icon});
 
-				setting
-					.setName(overwritten.domain)
-					.setDesc(desc)
+			setting
+				.setName(overwritten.domain)
+				.setDesc(desc)
 					.addExtraButton((b) => {
 						b.setIcon("pencil")
 							.setTooltip("Edit")
@@ -321,7 +333,7 @@ export class FaviconSettings extends PluginSettingTab {
 						.setTooltip("add custom icon")
 						.setIcon("plus-with-circle")
 						.onClick(async () => {
-							const modal = new OverwrittenIconModal(this.plugin, null, "URI Schema");
+						const modal = new OverwrittenIconModal(this.plugin, undefined, "URI Schema");
 
 							modal.onClose = async () => {
 								if (modal.saved) {
@@ -342,16 +354,20 @@ export class FaviconSettings extends PluginSettingTab {
 
 			const protocolContainer = containerEl.createDiv("overwritten");
 
-			const protocolDiv = protocolContainer.createDiv("overwritten");
-			for (const protocol of this.plugin.settings.protocol) {
-				const setting = new Setting(protocolDiv);
+		const protocolDiv = protocolContainer.createDiv("overwritten");
+		for (const protocol of this.plugin.settings.protocol) {
+			const setting = new Setting(protocolDiv);
 
-				const desc = new DocumentFragment();
-				desc.createEl("p", {text: "		" + protocol.icon}).prepend(iconAPI.getIcon(protocol.icon)!);
+			const desc = new DocumentFragment();
+			if (iconAPI) {
+				const icon = iconAPI.getIcon(protocol.icon);
+				if (icon) desc.append(icon);
+			}
+			desc.createEl("p", {text: "		" + protocol.icon});
 
-				setting
-					.setName(protocol.domain)
-					.setDesc(desc)
+			setting
+				.setName(protocol.domain)
+				.setDesc(desc)
 					.addExtraButton((b) => {
 						b.setIcon("pencil")
 							.setTooltip("Edit")
@@ -386,13 +402,13 @@ export class FaviconSettings extends PluginSettingTab {
 					});
 
 
-			}
+		}
 
-			const details = containerEl.createEl("details");
-			details.createEl("summary", {text: 'Advanced'});
-			const advanced = details.createDiv("advanced");
+		const details = containerEl.createEl("details");
+		details.createEl("summary", {text: 'Advanced'});
+		const advanced = details.createDiv("advanced");
 
-			new Setting(advanced)
+		new Setting(advanced)
 				.setName('Debounce')
 				.setDesc('How fast after editing a link should a icon be displayed(in milliseconds)?')
 				.addSlider(slider => {
@@ -406,7 +422,6 @@ export class FaviconSettings extends PluginSettingTab {
 						});
 				});
 
-		}
 
 		if(localStorage.getItem('debug-plugin') === '1') {
 			containerEl.createEl('h1', {text: 'Debugging tools'});
@@ -437,6 +452,6 @@ export class FaviconSettings extends PluginSettingTab {
 							this.display();
 						});
 				});
-			}
+		}
 	}
 }
